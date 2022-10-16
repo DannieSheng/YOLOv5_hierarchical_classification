@@ -239,13 +239,14 @@ def main(opt):
         # (optional: only for model trained before updating TreeCls) update tree cls and save   
         print(opt.hier_model)
         print(opt.update_tree_cls)
-        if opt.hier_model and opt.update_tree_cls:
-            LOGGER.info(":) here")
-            sys.path.append("/archive/DPDS/Xiao_lab/shared/hudanyun_sheng/github/hierarchical-classification/hierarchical_classification/")
-            from hierarchical_utils import TreeCls
-            yaml.dump(model_infer.tree_cls.tree, open(os.path.join(opt.savedir, "tree.yaml"), 'w'))
-            tree_cls_infer = TreeCls(model_infer.tree_cls.tree)
-            model_infer.tree_cls = tree_cls_infer
+        if opt.hier_model:
+            tree_cls_infer = model_infer.tree_cls
+            if opt.update_tree_cls:
+                sys.path.append("/archive/DPDS/Xiao_lab/shared/hudanyun_sheng/github/hierarchical-classification/hierarchical_classification/")
+                from hierarchical_utils import TreeCls
+                yaml.dump(model_infer.tree_cls.tree, open(os.path.join(opt.savedir, "tree.yaml"), 'w'))
+                tree_cls_infer = TreeCls(model_infer.tree_cls.tree)
+                model_infer.tree_cls = tree_cls_infer
 
         # model classes
         if hasattr(model_infer, "tree_cls") and model_infer.tree_cls is not None:
