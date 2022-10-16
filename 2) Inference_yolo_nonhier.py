@@ -104,11 +104,11 @@ def parse_options():
     parser.add_argument('--batch_size', type=int, default='2',
                         help='validation batch size')
     parser.add_argument('--workers', type=int, default=0)
-    parser.add_argument('--w_mask', type=bool, default=False)
-    parser.add_argument('--hier_model', type=bool, default=False)
+    parser.add_argument('--w_mask', action='store_true')
+    parser.add_argument('--hier_model', action='store_true')
     parser.add_argument('--device', default=0, type=int, help='device, -1 if using CPU')
     parser.add_argument('--thres_iou', type=float, default=0.3, help='iou threshold to match with ground truth')
-    parser.add_argument('--update_tree_cls', type=bool, default=False, help='a flag indicating whether or not update the tree')
+    parser.add_argument('--update_tree_cls', action='store_true', help='a flag indicating whether or not update the tree')
 
     return parser
 
@@ -287,7 +287,8 @@ def main(opt):
         ### Inference
 
         # update inference directories depended on model
-
+        if opt.w_mask:
+            model_infer.seg_l = None
         infer_dirs = {}
         for dset, data_dict in data_dicts.items():
             LOGGER.info("dataset: {}".format(dset))
@@ -479,7 +480,7 @@ def main(opt):
                 classes_confu, class_ids_confu  = CLASSES, CLASS_IDS
                 key_gt_lb = "labels"
                 
-            suffix_save = "" # "_{}".format(dset.split("LUAD-")[1]) if 'LUAD' in dset else ""
+            suffix_save = "" 
             if tree_cls_infer is not None:
                 data_prob = "cond"
                 suffix_save += "_{}".format(data_prob)
@@ -490,9 +491,10 @@ def main(opt):
                 class_ids_confu += list(data_dict.d2m_idx_.keys())
                 classes_confu   += [model_infer.tree_cls.classes[x[0]] for x in data_dict.d2m_idx_.values()]
             
-            all_eval[dset], all_cms[dset] = evaluate_dset(results, gts, classes_confu, class_ids_confu, key_ot_lb, key_gt_lb, thres_iou=opt.thres_iou, 
-                          infer_dir=infer_dir, suffix_save=suffix_save, verbose=False, 
-                          ignore=data_dict.ignore, ignore_idx=data_dict.ignore_idx)
+            all_eval[dset], all_cms[dset] = evaluate_dset(results, gts, classes_confu, class_ids_confu, 
+                                                          key_ot_lb, key_gt_lb, thres_iou=opt.thres_iou, 
+                                                          infer_dir=infer_dir, suffix_save=suffix_save, verbose=False, 
+                                                          ignore=data_dict.ignore, ignore_idx=data_dict.ignore_idx)
             
             if convert:
                 confu_pdf_conv = PdfPages(os.path.join(infer_dir, 'confusion_{}.pdf'.format(suffix_convert)))
