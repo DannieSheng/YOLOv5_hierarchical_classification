@@ -125,6 +125,8 @@ class options:
 
 
 def main(opt):
+    for key, val in vars(opt).items():
+        print("{}: {}".format(key, val))
     device = torch.device(f'cuda:{opt.device}' if torch.cuda.is_available() else "cpu")
 
     # load options used in training
@@ -219,8 +221,11 @@ def main(opt):
         LOGGER.info("model type: {}, hier model: {}".format(opt.model_type, opt.hier_model))
 
 
-        # (optional: only for model trained before updating TreeCls) update tree cls and save
-        if opt.model_type is not "non-hier":
+        # (optional: only for model trained before updating TreeCls) update tree cls and save   
+        print(opt.hier_model)
+        print(opt.update_tree_cls)
+        if opt.hier_model and opt.update_tree_cls:
+            LOGGER.info(":) here")
             sys.path.append("/archive/DPDS/Xiao_lab/shared/hudanyun_sheng/github/hierarchical-classification/hierarchical_classification/")
             from hierarchical_utils import TreeCls
             yaml.dump(model_infer.tree_cls.tree, open(os.path.join(opt.savedir, "tree.yaml"), 'w'))
@@ -258,19 +263,11 @@ def main(opt):
             LOGGER.info("non-max suppression parameters used in training: {}.".format(model_infer.nms_params))
             model_infer.nms_params = nms_params
 
-
-
-
-
-
         if iep == 0:
-            data_dicts, test_sets, test_loaders, test_sets_eval, test_loaders_eval = get_data_dicts(test_data_full, 
-                                                                                                classes=CLASSES,
-                                                                                                split="test", 
-                                                                                                batch_size=opt.batch_size, 
-                                                                                                hier_model=opt.hier_model, 
-                                                                                                tree_cls=None, 
-                                                                                                root_only=False)
+            data_dicts, test_sets, test_loaders, test_sets_eval, test_loaders_eval = \
+            get_data_dicts(test_data_full, classes=CLASSES, model_stride=stride, split="test",  
+            batch_size=opt.batch_size, hier_model=opt.hier_model, tree_cls=None, root_only=False, 
+            scale_ratio = opt.img_size/opt.patch_size)
 
             set_params = "conf_{}_iou_{}_maxdet_{}_covg_iou_{}".format(nms_params['conf_thres'], 
                                                              nms_params['iou_thres'], 
