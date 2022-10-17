@@ -117,7 +117,7 @@ def _prepare_convert(classes_old, old2new):
 def parse_options():
     parser = argparse.ArgumentParser('Inference YOLO w/o hierarchical classification', add_help=False)
     parser.add_argument('--savedir', type=str,
-                        default='/archive/DPDS/Xiao_lab/shared/hudanyun_sheng/projects/yolov5_mask_hierarchical_small/notebooks/results/hierarchical_loss/hier_loss_mask_imsize640_batch4_2022-02-25-10-12/',
+#                         default='/archive/DPDS/Xiao_lab/shared/hudanyun_sheng/projects/yolov5_mask_hierarchical_small/notebooks/results/hierarchical_loss/hier_loss_mask_imsize640_batch4_2022-02-25-10-12/',
                         help='directory of data')
     parser.add_argument('--inferdir', type=str, default='', help='inference directory if different from savedir')
     parser.add_argument('--img_size', type=int, default=640, help='size of the image')
