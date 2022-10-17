@@ -268,7 +268,7 @@ verbose=False, ignore=[], ignore_idx=[]):
     perf_det = {
         "recall": pr[1],
         "precision": pr[0],
-        "f_score": 1/sum(1/pr)
+        "f_score": 2/sum(1/pr)
     }
     LOGGER.info("Overall coverage at iou {:.2f}: {:.3f}, precision: {:.3f}, F score: {:.3f}"\
                 .format(thres_iou, perf_det["recall"], perf_det["precision"], perf_det["f_score"]))
