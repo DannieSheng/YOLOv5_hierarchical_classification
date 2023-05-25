@@ -865,10 +865,11 @@ def inference_on_loader(model, dataloader,
                     'masks': masks_gti
                 }
                 try:
+                    cls_gt = [cid2cls_gt[int(i)] for i in gti['labels']]
+                except:
+                    import pdb; pdb.set_trace()
                     cls_gt = [cid2cls[int(i)] for i in gti['labels']]
                     # cls_gt = [classes[int(i)] if not i == ignore_idx else 'unlabeled' for i in gti['labels']]
-                except:
-                    cls_gt = [cid2cls_gt[int(i)] for i in gti['labels']]
 
                 """if dset.lower() == 'consep':
                     if 'other' in cls_gt:
@@ -879,10 +880,11 @@ def inference_on_loader(model, dataloader,
 
                 ucids_gt, counts_gt = torch.unique(gti['labels'], return_counts=True)
                 try:
+                    ucls_gt = [cid2cls_gt[int(i)] for i in ucids_gt]
+                    
+                except:
                     ucls_gt = [cid2cls[int(i)] for i in ucids_gt]
                     # ucls_gt = ['unlabeled' if i == ignore_idx else classes[i] for i in ucids_gt.long()]
-                except:
-                    ucls_gt = [cid2cls_gt[int(i)] for i in ucids_gt]
 
                 fig, axs = plt.subplots(1, 4, figsize=(12, 5))
                 for j, (cid_gt, cl_gt, count) in enumerate(zip(ucids_gt.long(), ucls_gt, counts_gt)):
